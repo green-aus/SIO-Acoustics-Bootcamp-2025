@@ -62,7 +62,7 @@ anchorpos = phones'; % (Q)x(L) where Q = 3 dimensions
 
 [tgtposest, tgtposcov] = tdoaposest(tdoaest, tdoavar, anchorpos, PropagationSpeed = c);
 det = tgtposest';
-tgtposcov;
+detvar = 5e-7 * tgtposcov;
 
 % get bearing and elevation angle
 [azimuth, elevation, r] = cart2sph(det(1), det(2), det(3));
@@ -133,7 +133,7 @@ view(90, 0) % views in line with y axis
 % orientation and position
 plotOrientation(op1, R, p');
 plotDetection(lp1, phones);
-plotDetection(det1, det);
+plotDetection(det1, det, detvar);
 
 % plotDetection(det1, p1');
 % plotDetection(det1, p2');
@@ -141,12 +141,12 @@ plotDetection(det1, det);
 % orientation and position
 plotOrientation(op2, R, p');
 plotDetection(lp2, phones);
-plotDetection(det2, det);
+plotDetection(det2, det, detvar);
 
 % orientation and position
 plotOrientation(op3, R, p');
 plotDetection(lp3, phones);
-plotDetection(det3, det);
+plotDetection(det3, det, detvar);
 
 
 
