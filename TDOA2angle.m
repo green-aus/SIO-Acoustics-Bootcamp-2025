@@ -6,6 +6,10 @@ author = "Gabriel Gekas";
 
 filename = 'DTOA_AllLocations_OnlyFirstSampling.csv';
 tdoa = readtable(['Data/', filename]);
+depth = tdoa.Depth; % meters
+t = table2array(tdoa(:, 3:end));
+t = t(1, :);
+depth = depth(1);
 
 heading = 180; % degrees heading in geodetic frame (north-0, +clockwise)
 tilt = 30; % degrees upward tilt of hydrophone array
@@ -13,10 +17,9 @@ tilt = 30; % degrees upward tilt of hydrophone array
 % water properties taken from https://data.caloos.org/
 T = 18.39; % Temperature [Celsius]
 S = 30.2; % Salinity [PSS]
-depth = 4; % m
 c = salt_water_c(T, depth, S);
 
-array_axis_size = 2; % m
+array_axis_size = 2; % m for axis size in plot
 
 % define hydrophone placement in array coordinates [meters]
 A = [0.45 0.54 0.11]';
@@ -46,17 +49,18 @@ z = phones(:, 3);
 % xlabel('X')
 % ylabel('Y')
 % zlabel('Z')
+% 
 
 %% calculate example TDOA:
-% comment this section out if TDOA is supplied elsewhere
-
-source = [1, -6, -4]'; % 10 meters south
-r = phones' - source;
-r = sqrt(r(1, :).^2 + r(2, :).^2 + r(3, :).^2); % calculates range to each receiver
-t = r/c; % get travel time to each receiver
-t = t - t(1); % get reduced time relative to hydrophone A
-tA = t(1); tB = t(2); tC = t(3); tD = t(4); tE = t(5);
-
+% % comment this section out if TDOA is supplied elsewhere
+% 
+% source = [1, -6, -4]'; % 10 meters south
+% r = phones' - source;
+% r = sqrt(r(1, :).^2 + r(2, :).^2 + r(3, :).^2); % calculates range to each receiver
+% t = r/c; % get travel time to each receiver
+% t = t - t(1); % get reduced time relative to hydrophone A
+% tA = t(1); tB = t(2); tC = t(3); tD = t(4); tE = t(5);
+% 
 
 %% calculate position from from TDOA:
 
@@ -70,8 +74,8 @@ detvar = 5e-7 * tgtposcov;
 
 % get bearing and elevation angle
 [azimuth, elevation, r] = cart2sph(det(1), det(2), det(3));
-bearing = 90 - rad2deg(azimuth);
-elevation = rad2deg(elevation);
+bearing = 90 - rad2deg(azimuth)
+elevation = rad2deg(elevation)
 
 % p1 = inv(R)*B;
 % p2 = inv(R)*C;
