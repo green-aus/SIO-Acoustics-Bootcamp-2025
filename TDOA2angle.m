@@ -6,17 +6,16 @@ author = "Gabriel Gekas";
 
 filename = 'DTOA_AllLocations_OnlyFirstSampling.csv';
 tdoa = readtable(['Data/', filename]);
-depth = tdoa.Depth; % meters
+Depth = tdoa.Depth; % meters
 t = table2array(tdoa(:, 3:end));
-t = t(1, :);
-depth = depth(1);
 
 heading = 180; % degrees heading in geodetic frame (north-0, +clockwise)
-tilt = 30; % degrees upward tilt of hydrophone array
+tilt = 35; % degrees upward tilt of hydrophone array
 
 % water properties taken from https://data.caloos.org/
 T = 18.39; % Temperature [Celsius]
 S = 30.2; % Salinity [PSS]
+depth = Depth(1); % only used to compute c
 c = salt_water_c(T, depth, S);
 
 array_axis_size = 2; % m for axis size in plot
@@ -44,12 +43,6 @@ x = phones(:, 1);
 y = phones(:, 2);
 z = phones(:, 3);
 
-% figure; 
-% plot3(phone_coords(1, :), phone_coords(2, :), phone_coords(3, :), 'o');
-% xlabel('X')
-% ylabel('Y')
-% zlabel('Z')
-% 
 
 %% calculate example TDOA:
 % % comment this section out if TDOA is supplied elsewhere
@@ -64,7 +57,7 @@ z = phones(:, 3);
 
 %% calculate position from from TDOA:
 
-tdoaest = t(2:end); % tdoas referenced to t(1) (K)x(L-1)
+tdoaest = t(:, 2:end); % tdoas referenced to t(1) (K)x(L-1)
 tdoavar = 0.00001 * ones(1, size(tdoaest, 2));
 anchorpos = phones'; % (Q)x(L) where Q = 3 dimensions
 
@@ -73,9 +66,10 @@ det = tgtposest';
 detvar = 5e-7 * tgtposcov;
 
 % get bearing and elevation angle
-[azimuth, elevation, r] = cart2sph(det(1), det(2), det(3));
-bearing = 90 - rad2deg(azimuth)
-elevation = rad2deg(elevation)
+[azimuth, elevation, r] = cart2sph(det(:, 1), det(:, 2), det(:, 3));
+bearing = 90 - rad2deg(azimuth);
+elevation = rad2deg(elevation);
+tab = table(bearing, elevation)
 
 % p1 = inv(R)*B;
 % p2 = inv(R)*C;
@@ -155,6 +149,7 @@ plotDetection(det2, det, detvar);
 plotOrientation(op3, R, p');
 plotDetection(lp3, phones);
 plotDetection(det3, det, detvar);
+
 
 
 
