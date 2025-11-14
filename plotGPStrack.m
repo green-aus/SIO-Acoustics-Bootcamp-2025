@@ -72,7 +72,7 @@ coords.lon = -coords.lon;
 lat = coords.lat(:);
 lon = coords.lon(:);
 
-minDist = 100;   % meters (choose your threshold)
+minDist = 50;   % meters (choose your threshold)
 
 keep = true(size(lat));
 
@@ -94,7 +94,7 @@ end
 lat = lat(keep);
 lon = lon(keep);
 
-station = [7, 1, 5, 4, 3, 6, 4]';
+station = [7, 1, 2, 5, 4, 3, 6, 4]'; % hard coded to match spreadsheet
 coords = table(station, lat, lon);
 
 array_coords = [32.8670661, -117.2574346]'; % pier
