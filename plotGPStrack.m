@@ -10,7 +10,7 @@ gps2file = 'Data/SP2423_gnss_gp170-2024-11-03.txt';
 % gps1file = 'C:\Users\gabe\Desktop\School\PhD\FA24\SIOB 280\cruise_report\SP2424\openrvdas\data\SP2424_gnss_gp170-2024-11-03.txt';
 % gps2file = 'C:\Users\gabe\Desktop\School\PhD\FA24\SIOB 280\cruise_report\SP2424\openrvdas\data\SP2424_gnss_gp170-2024-11-04.txt';
 
-titlestring = 'Bathymetry with Cruise Track 11/02/2024';
+titlestring = 'Cruise Track with Bathymetry 11/02/2024';
 
 
 %read first file
@@ -48,7 +48,7 @@ decLatitude = 32 + latMinutes/60; %final cruise track latitudes
 decLongitude = 117 + lonMinutes/60;
 decLongitude = decLongitude * (-1); % 117 W -> -117 final cruise track longitudes
 
-%convert ISO date into Matlab serial date
+% convert ISO date into Matlab serial date
 alldates = dbISO8601toSerialDate(alldates);
 
 %% plot map
@@ -64,21 +64,20 @@ depth_bath(depth_bath == 32767) = NaN;  % Replace the missing data with NaN
 [lonGrid, latGrid] = meshgrid(lon_bath, lat_bath);
 
 % Define map limits
-latlim = [min(decLatitude - 0.2) max(decLatitude + 0.2)]; % Adjust for your region of interest
-lonlim = [min(decLongitude - 0.2) max(decLongitude + 0.2)];
-latlim = (floor(latlim*10))/10; %round down
-lonlim = (floor(lonlim*10))/10; %round down
-% latlim = [32.2, 34.2]; % Adjust for your region of interest
-% lonlim = [-119.2, -117.2];
+latlim = [32.6, 33.0]; % Adjust for your region of interest
+lonlim = [-117.5 -117.1];
 
 % Plot bathymetry map
-figure
+width = 800; height = 500;
+Pix_SS = get(0,'screensize');
+fig = figure('Position', [(Pix_SS(3)-width)/2 (Pix_SS(4)-height)/2 width height]); a = tiledlayout(3, 7);
+set(gcf, 'Color', [1, 1, 1]);
 axesm('Mercator', 'Frame', 'off', 'Grid', 'on', 'ParallelLabel', 'off');  % Set Mercator projection
 hold on
 worldmap(latlim, lonlim)
 geoshow(latGrid, lonGrid, depth_bath,'DisplayType','surface');
 
-%define colormap
+% define colormap
 zlimits = [-1500 500];
 demcmap(zlimits)
 colorbar
@@ -86,12 +85,13 @@ colorbar
 % Overlay cruise track
 scatterm(decLatitude, decLongitude, 5, alldates, 'filled','r')
 
-% Define axis tick marks
-latTicks = [32.4 32.6 32.8];  % Latitude tick marks
-lonTicks = [-117.9 -117.7 -117.5 -117.3 -117.1];  % Longitude tick marks
-
 % Label plot
 title(titlestring)
 xlabel('Longitude')
 ylabel('Latitude')
 hold off
+
+DIRIN = [pwd, '/figures/'];
+filename = 'cruise_track.png';
+filepath = [DIRIN, filename];
+saveas(gcf, filepath)
